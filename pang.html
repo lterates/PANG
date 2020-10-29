@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PANG!</title>
+    <link rel="stylesheet" type="text/css" href="pang.css">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div style="font-family:'Press Start 2P'; color:white; text-align: center;" id='container'>
+        P A N G !
+        <canvas id="myCanvas"></canvas>
+        <svg width="20px" height="20px" style="outline:2px solid red; margin-top:7px">
+            <a href="menu.html">
+                <text id="menu" font-size="16px" fill="red" x="3" y="19">X</text>
+            </a>
+        </svg>
+    </div>
+
+    <script>
+        const canvas = document.querySelector('#myCanvas')
+        const ctx = canvas.getContext('2d');
+
+        let canvasW = 1000;
+        let canvasH = 900;
+        let buster;
+        let keys = [];
+        let bullets = [];
+        let balls = [];
+        let score = 0;
+        let lives = 3;
+        let level = 1;
+
+        document.addEventListener('DOMContentLoaded', SetupCanvas);
+
+        function SetupCanvas() {
+            canvas.width = canvasW
+            canvas.height = canvasH
+            ctx.fillStyle = 'black'
+            ctx.fillRect (0, 0, canvas.width, canvas.height);
+            
+            buster = new Buster();
+            ballNew = new Ball();
+            harpoon1 = new Harpoon();
+
+            document.body.addEventListener("keydown", HandleKeyDown);
+            document.body.addEventListener("keyup", HandleKeyUp);
+
+            Render()
+        }
+        function HandleKeyDown(e){
+            keys[e.keyCode] = true;
+        }
+        function HandleKeyUp(e){
+            keys[e.keyCode] = false;
+            if (e.keyCode === 32){
+                bullets.push(new Harpoon(1)); 
+            }
+        }
+
+
+        // ~~~~~~~~~~~~~~~~~~~~ CLASSE DA PERSONAGEM ~~~~~~~~~~~~~~~~~~~~~~~~
+        class Buster {
+            constructor(){
+                this.visible = true; 
+                this.radius = 40;
+                this.moveLeft = false;
+                this.moveRight = false;
+                this.x = (canvasW / 2) - 40;
+                this.y = 700;
+                this.speed = 0.2 
+                this.velX = 0 
+                this.velY = 0
+                this.strokeColor = 'white'
+            }
+
+            Update(){
+            }
+
+            Draw(){
+                ctx.strokeStyle = this.strokeColor;
+                ctx.fillStyle = "orange"
+                ctx.beginPath();
+                ctx.rect(this.x, this.y, 80, 150)
+                ctx.stroke();
+                ctx.fill();
+            }
+        }
+
+        // ~~~~~~~~~~~~~~~~~~~~ CLASSE DAS BOLAS ~~~~~~~~~~~~~~~~~~~~~~~~
+        class Ball{
+            constructor(x, y, radius, level){
+                this.visible = true;
+                this.x = canvasW/2;
+                this.y = 150;
+                this.radius = 50; 
+                this.strokeColor = 'red';
+                this.level = 1; 
+            }
+
+            Update(){
+
+            }
+
+            Draw(){
+                ctx.beginPath()
+                ctx.fillStyle = "#FF0000";
+                ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        //~~~~~~~~~~~~~~~~~~~~ CLASSE DO HARPÃO ~~~~~~~~~~~~~~~~~~~~~~~~
+        class Harpoon {
+            constructor(x, y, radius) {
+                this.visible = true;
+                this.x = buster.x + buster.radius;
+                this.y = buster.y + buster.radius;
+                this.radius = 10;
+            }
+
+            Update(){
+                this.x = buster.x + buster.radius;  
+            }
+
+            Draw(){
+                ctx.beginPath()
+                ctx.fillStyle = "grey";
+                ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        // Vidas
+        function livesDraw(){
+            let startX = 950;
+            let startY = 10;
+            ctx.strokeStyle = 'red';
+            ctx.fillStyle = 'red';
+            for(let i = 0; i < lives; i++){
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.rect(startX, startY, 15, 15)
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+                startX -= 50;
+            }
+        }
+        
+
+        function Render() {
+            buster.moveLeft = (keys[65] || keys[37]);
+            buster.moveRight = (keys[68] || keys[39]);
+            if (buster.moveLeft) {
+                buster.x -= 2
+            }
+            if (buster.moveRight) {
+                buster.x += 2
+            }
+            
+            //Floor
+            ctx.strokeStyle = this.strokeColor;
+            ctx.fillStyle = "black"
+            ctx.beginPath();
+            ctx.rect(150, 150, 150, 150)
+            ctx.stroke();
+            ctx.fill();
+            
+            ctx.clearRect(0,0, canvasW, canvasH);
+            ctx.fillStyle = 'white'
+            ctx.font='16px "Press Start 2P"';
+            if(lives <= 0){
+                document.body.removeEventListener("keydown", HandleKeyDown);
+                document.body.removeEventListener("keyup", HandleKeyUp);
+                ctx.fillStyle = 'white';
+                ctx.font='50px "Press Start 2P"';
+                ctx.fillText('GAME OVER', canvasW / 2 - 220, canvasH / 2) 
+            }      
+
+            livesDraw();
+
+            buster.Update();
+            buster.Draw();
+            ballNew.Update();
+            ballNew.Draw();
+            harpoon1.Update();
+            harpoon1.Draw();
+
+            requestAnimationFrame(Render);
+        }
+    </script>
+</body>
+</html>

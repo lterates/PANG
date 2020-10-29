@@ -1,0 +1,14 @@
+body{
+    background: black;
+}
+
+#container {
+    max-width: 1000px;
+    margin: auto;
+    align-content: center;
+}
+
+#myCanvas{
+    background: lightskyblue;
+    border: 1px solid #ffffff;
+}
