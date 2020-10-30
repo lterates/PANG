@@ -52,9 +52,6 @@
         }
         function HandleKeyUp(e){
             keys[e.keyCode] = false;
-            if (e.keyCode === 32){
-                bullets.push(new Harpoon(1)); 
-            }
         }
 
 
@@ -70,7 +67,6 @@
                 this.speed = 0.2 
                 this.velX = 0 
                 this.velY = 0
-                this.strokeColor = 'white'
             }
 
             Update(){
@@ -117,7 +113,8 @@
                 this.visible = true;
                 this.x = buster.x + buster.radius;
                 this.y = buster.y + buster.radius;
-                this.radius = 10;
+                this.radius = 5;
+                this.shot = false;
             }
 
             Update(){
@@ -127,14 +124,18 @@
             Draw(){
                 ctx.beginPath()
                 ctx.fillStyle = "grey";
-                ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x, this.y - 50);
+                ctx.lineTo(this.x + 10, this.y - 40);
+                ctx.lineTo(this.x, this.y - 70);
+                ctx.lineTo(this.x - 10, this.y - 40);
+                ctx.lineTo(this.x, this.y - 50);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
             }
         }
 
-        // Vidas
         function livesDraw(){
             let startX = 950;
             let startY = 10;
@@ -163,35 +164,29 @@
         function Render() {
             buster.moveLeft = (keys[65] || keys[37]);
             buster.moveRight = (keys[68] || keys[39]);
-            if (buster.moveLeft) {
+            harpoon.shot = (keys[32] || keys[38] || keys[87])
+            let exit = keys[27];
+            if (buster.moveLeft && buster.x !== 0) {
                 buster.x -= 2
             }
-            if (buster.moveRight) {
+            if (buster.moveRight && buster.x !== canvasW - 2 * buster.radius) {
                 buster.x += 2
+            }
+            if (harpoon.shot) {
+                harpoon.y -= 5;
+                console.log("SHOT");
             }
             
             
             ctx.clearRect(0,0, canvasW, canvasH);
-            ctx.fillStyle = 'white'
-            ctx.font='16px "Press Start 2P"';
-            if(lives <= 0){
-                document.body.removeEventListener("keydown", HandleKeyDown);
-                document.body.removeEventListener("keyup", HandleKeyUp);
-                ctx.fillStyle = 'white';
-                ctx.font='50px "Press Start 2P"';
-                ctx.fillText('GAME OVER', canvasW / 2 - 220, canvasH / 2) 
-            }      
-
             livesDraw();
             floor();
-
             buster.Update();
             buster.Draw();
             ballNew.Update();
             ballNew.Draw();
             harpoon.Update();
             harpoon.Draw();
-
             requestAnimationFrame(Render);
         }
     </script>
