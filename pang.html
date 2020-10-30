@@ -40,7 +40,7 @@
             
             buster = new Buster();
             ballNew = new Ball();
-            harpoon1 = new Harpoon();
+            harpoon = new Harpoon();
 
             document.body.addEventListener("keydown", HandleKeyDown);
             document.body.addEventListener("keyup", HandleKeyUp);
@@ -151,6 +151,14 @@
             }
         }
         
+        function floor(){
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = "blue"
+            ctx.beginPath();
+            ctx.rect(0, 850, canvasW, 50)
+            ctx.stroke();
+            ctx.fill();
+        }
 
         function Render() {
             buster.moveLeft = (keys[65] || keys[37]);
@@ -162,13 +170,6 @@
                 buster.x += 2
             }
             
-            //Floor
-            ctx.strokeStyle = this.strokeColor;
-            ctx.fillStyle = "black"
-            ctx.beginPath();
-            ctx.rect(150, 150, 150, 150)
-            ctx.stroke();
-            ctx.fill();
             
             ctx.clearRect(0,0, canvasW, canvasH);
             ctx.fillStyle = 'white'
@@ -182,13 +183,14 @@
             }      
 
             livesDraw();
+            floor();
 
             buster.Update();
             buster.Draw();
             ballNew.Update();
             ballNew.Draw();
-            harpoon1.Update();
-            harpoon1.Draw();
+            harpoon.Update();
+            harpoon.Draw();
 
             requestAnimationFrame(Render);
         }
