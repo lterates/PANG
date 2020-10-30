@@ -61,7 +61,7 @@
                 this.radius = 40;
                 this.moveLeft = false;
                 this.moveRight = false;
-                this.x = (canvasW / 2) - 40;
+                this.x = (canvasW / 2) - this.radius;
                 this.y = 700;
             }
 
@@ -87,11 +87,16 @@
                 this.radius = 50; 
                 this.strokeColor = 'red';
                 this.level = 1;
-                this.velX = 1;
+                this.velX = 0.5;
                 this.velY = 1;
             }
 
             Update(){
+            }
+
+            Reset(){
+                this.x = canvasW / 2;
+                this.y = 300;
             }
 
             Draw(){
@@ -110,7 +115,6 @@
                 this.visible = true;
                 this.x = buster.x + buster.radius;
                 this.y = buster.y + buster.radius;
-                this.radius = 5;
                 this.shot = false;
             }
 
@@ -173,13 +177,31 @@
                 harpoon.y -= 5;
             }
             ballNew.x += ballNew.velX;
-            if (ballNew.x == canvasW - ballNew.radius){
-                ballNew.velX = -1
+            ballNew.y += ballNew.velY;
+            if (ballNew.x == canvasW - ballNew.radius || ballNew.x == ballNew.radius){
+                ballNew.velX *= -1
             }
-            if (ballNew.x == ballNew.radius){
-                ballNew.velX = 1
+            if (ballNew.y + ballNew.radius == 850 || ballNew.y == 299){
+                ballNew.velY *= -1
             }
             //COLISÕES VÃO SER CHAMADAS AQUI
+            if(harpoon.x + 5 <= ballNew.x + ballNew.radius 
+                && harpoon.x - 5 >= ballNew.x - ballNew.radius
+                && harpoon.y - 70 <= ballNew.y + ballNew.radius
+                && harpoon.y - 70 >= ballNew.y - ballNew.radius){
+                console.log("bang")
+                harpoon.x = buster.x + buster.radius
+                harpoon.y = buster.y + buster.radius
+                ballNew.Reset();
+            }
+            if(buster.x + 40 <= ballNew.x + ballNew.radius
+                && buster.x - 40 >= ballNew.x - ballNew.radius
+                && buster.y - 75 <= ballNew.y + ballNew.radius
+                && buster.y - 75 >= ballNew.y - ballNew.radius){
+                console.log("LOST")
+                ballNew.Reset();
+                lives -= 1;
+            }
             
             
             ctx.clearRect(0,0, canvasW, canvasH);
