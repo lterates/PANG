@@ -25,7 +25,7 @@
         let canvasH = 900;
         let buster;
         let style;
-        
+        let frameIndex = 0;
         let gravity = 0.001
         let keys = [];
         let balls = [];
@@ -80,14 +80,25 @@
 
             Update(){
             }
-
+            
             Draw(){
-                ctx.strokeStyle = this.strokeColor;
+                let spriteImg = new Image();
+                spriteImg.src = "sprites.png";
+                spriteImg.onload = function(){
+                }
+                
+                ctx.drawImage(spriteImg, frameIndex*80,0,80,80,this.x ,this.y , 100, 170)
+                
+                frameIndex++;
+                if(frameIndex == 10){
+                    frameIndex = 0;
+                }
+                /*ctx.strokeStyle = this.strokeColor;
                 ctx.fillStyle = this.style;
                 ctx.beginPath();
                 ctx.rect(this.x, this.y, 80, 150)
                 ctx.stroke();
-                ctx.fill();
+                ctx.fill();*/
             }
         }
 
