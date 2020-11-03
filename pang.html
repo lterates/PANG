@@ -40,10 +40,11 @@
             //ctx.fillStyle = 'black'
             //ctx.fillRect (0, 0, canvas.width, canvas.height);
             background();
-            buster = new Buster("orange");
-            buster2 = new Buster("lightgreen");
+            buster = new Buster();
+            buster2 = new Buster();
             ball = new Ball();
-            harpoon = new Harpoon();
+            harpoon = new Harpoon("orange");
+            harpoon2 = new Harpoon("lightgreen");
 
             document.body.addEventListener("keydown", HandleKeyDown);
             document.body.addEventListener("keyup", HandleKeyUp);
@@ -68,14 +69,13 @@
 
         // ~~~~~~~~~~~~~~~~~~~~ CLASSE DA PERSONAGEM ~~~~~~~~~~~~~~~~~~~~~~~~
         class Buster {
-            constructor(style){
+            constructor(){
                 this.visible = true; 
                 this.radius = 40;
                 this.moveLeft = false;
                 this.moveRight = false;
                 this.x = (canvasW / 2) - this.radius;
                 this.y = 700;
-                this.style = style
             }
 
             Update(){
@@ -90,15 +90,9 @@
                 ctx.drawImage(spriteImg, frameIndex*80,0,80,80,this.x ,this.y , 100, 170)
                 
                 frameIndex++;
-                if(frameIndex == 10){
+                if(frameIndex == 9){
                     frameIndex = 0;
                 }
-                /*ctx.strokeStyle = this.strokeColor;
-                ctx.fillStyle = this.style;
-                ctx.beginPath();
-                ctx.rect(this.x, this.y, 80, 150)
-                ctx.stroke();
-                ctx.fill();*/
             }
         }
 
@@ -136,20 +130,21 @@
 
         //~~~~~~~~~~~~~~~~~~~~ CLASSE DO HARPÃO ~~~~~~~~~~~~~~~~~~~~~~~~
         class Harpoon {
-            constructor(x, y, radius) {
+            constructor(style) {
                 this.visible = true;
                 this.x = buster.x + buster.radius;
                 this.y = buster.y + buster.radius;
                 this.shot = false;
+                this.style = style;
             }
 
             Update(){
-                this.x = buster.x + buster.radius;  
+                
             }
 
             Draw(){
                 ctx.beginPath()
-                ctx.fillStyle = "grey";
+                ctx.fillStyle = this.style;
                 ctx.moveTo(this.x, this.y);
                 ctx.lineTo(this.x, this.y - 50);
                 ctx.lineTo(this.x + 10, this.y - 40);
@@ -192,7 +187,8 @@
             buster2.moveLeft = (keys[37]);
             buster.moveRight = (keys[68]);
             buster2.moveRight = (keys[39]);
-            harpoon.shot = (keys[32] || keys[38] || keys[87])
+            harpoon.shot = (keys[32])
+            harpoon2.shot = (keys[87])
             let exit = keys[27];
             //BUSTER 1
             if (buster.moveLeft && buster.x !== 0) {
@@ -201,9 +197,16 @@
             if (buster.moveRight && buster.x !== canvasW - 2 * buster.radius) {
                 buster.x += 2
             }
+
+            //HARPOONS
             if (harpoon.shot) {
                 harpoon.y -= 5;
             }
+            if (harpoon2.shot) {
+                harpoon2.y -= 5;
+            }
+            harpoon.x = buster.x + buster.radius;
+            harpoon2.x = buster2.x + buster.radius;
             //BUSTER 2
             if (buster2.moveLeft && buster2.x !== 0) {
                 buster2.x -= 2
@@ -238,9 +241,11 @@
             background();
             livesDraw();
             floor();
-            buster.Draw();
             harpoon.Update();
             harpoon.Draw();
+            harpoon2.Update();
+            harpoon2.Draw();
+            buster.Draw();
             buster2.Draw();
             ball.Draw();
             requestAnimationFrame(Render);
