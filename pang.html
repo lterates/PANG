@@ -38,6 +38,7 @@
             ctx.fillRect (0, 0, canvas.width, canvas.height);
             
             buster = new Buster();
+            buster 
             ballNew = new Ball();
             harpoon = new Harpoon();
 
@@ -176,14 +177,17 @@
             if (harpoon.shot) {
                 harpoon.y -= 5;
             }
+
             ballNew.x += ballNew.velX;
             ballNew.y += ballNew.velY;
+
             if (ballNew.x == canvasW - ballNew.radius || ballNew.x == ballNew.radius){
                 ballNew.velX *= -1
             }
             if (ballNew.y + ballNew.radius == 850 || ballNew.y == 299){
                 ballNew.velY *= -1
             }
+
             //COLISÕES VÃO SER CHAMADAS AQUI
             if(harpoon.x + 5 <= ballNew.x + ballNew.radius 
                 && harpoon.x - 5 >= ballNew.x - ballNew.radius
@@ -194,15 +198,6 @@
                 harpoon.y = buster.y + buster.radius
                 ballNew.Reset();
             }
-            if(buster.x + 40 <= ballNew.x + ballNew.radius
-                && buster.x - 40 >= ballNew.x - ballNew.radius
-                && buster.y - 75 <= ballNew.y + ballNew.radius
-                && buster.y - 75 >= ballNew.y - ballNew.radius){
-                console.log("LOST")
-                ballNew.Reset();
-                lives -= 1;
-            }
-            
             
             ctx.clearRect(0,0, canvasW, canvasH);
             livesDraw();
