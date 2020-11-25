@@ -198,8 +198,12 @@
                 console.log("bang")
                 harpoon.x = buster.x + buster.radius
                 harpoon.y = buster.y + buster.radius
+                //não é suposto ser reset porque o movimento continua
                 ballNew.Reset();
+                //push de uma nova bola e diminuir o tamanho da atual
+                //definir 
             }
+            //colisao player e bola + controlo de vidas
             if(buster.x + 40 <= ballNew.x + ballNew.radius
                 && buster.x - 40 >= ballNew.x - ballNew.radius
                 && buster.y - 75 <= ballNew.y + ballNew.radius
