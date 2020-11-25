@@ -289,6 +289,7 @@
                 }
             }
             
+            //If lives reach 0
             if(livesBuster1 <= 0){
                 buster.visible = false;
                 ctx.fillStyle = 'white';
@@ -306,6 +307,7 @@
                 buster2.Draw();
             }
 
+            //Levels
             if(balls.length === 0){
                 level++;
                 livesBuster1++;
@@ -319,7 +321,7 @@
                     balls.push(new Ball("#45f542", 200, 300, 50, 1, -1));
                 }
             }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DRAW & UPDATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //DRAW & UPDATE
             background();
             livesDraw();
             floor();
