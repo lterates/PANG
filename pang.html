@@ -23,31 +23,24 @@
 
         let canvasW = 1000;
         let canvasH = 900;
-        let frameIndex = 0;
-        let aceleration = 0.1
-        let amplitude = 4;
-        let angle = -85 * Math.PI / 180;
+        let buster;
         let keys = [];
         let balls = [];
-        let harpoons = [];
-        let livesBuster1 = 3;
-        let livesBuster2 = 3;
-        let frameCounter = 0;
+        let lives = 3;
         let level = 1;
-        
-        let spriteImg = new Image();
-        spriteImg.src = "sprites.png";
 
         document.addEventListener('DOMContentLoaded', SetupCanvas);
 
         function SetupCanvas() {
             canvas.width = canvasW
             canvas.height = canvasH
-            background();
-            buster = new Buster(300);
-            buster2 = new Buster(600);
-            balls.push(new Ball("#45f542", canvasW / 2, 300, 50, 1, 1));
+            ctx.fillStyle = 'black'
+            ctx.fillRect (0, 0, canvas.width, canvas.height);
             
+            buster = new Buster();
+            ballNew = new Ball();
+            harpoon = new Harpoon();
+
             document.body.addEventListener("keydown", HandleKeyDown);
             document.body.addEventListener("keyup", HandleKeyUp);
 
@@ -56,122 +49,83 @@
         function HandleKeyDown(e){
             keys[e.keyCode] = true;
         }
-
-        function HandleKeyUp(e) {
+        function HandleKeyUp(e){
             keys[e.keyCode] = false;
-            if (e.keyCode === 87 && buster.visible == true){
-                harpoons.push(new Harpoon(buster.x, "orange"))
-            }
-            if (e.keyCode === 38 && buster2.visible == true){
-                harpoons.push(new Harpoon(buster2.x, "lightgreen"))
-            }
         }
 
-        //BACKGROUND RENDER
-        function background(){
-            let img = new Image();
-            img.src = 'night_sky.png';
-            img.onload = function(){
-                ctx.drawImage(img, 0, 0);
-            }
-        }
-
-        function framerateSpriteFix() {
-            frameCounter++;
-            if(frameCounter == 4) {
-                return frameCounter;
-                frameCounter = 0;
-            }
-        }
 
         // ~~~~~~~~~~~~~~~~~~~~ CLASSE DA PERSONAGEM ~~~~~~~~~~~~~~~~~~~~~~~~
         class Buster {
-            constructor(posX){
+            constructor(){
                 this.visible = true; 
                 this.radius = 50;
+                this.radius = 40;
                 this.moveLeft = false;
                 this.moveRight = false;
-                this.x = posX;
+                this.x = (canvasW / 2) - this.radius;
                 this.y = 700;
             }
 
             Update(){
             }
 
-            Reset() {
-                this.x = canvasW/2;
-            }
-            
-            Draw(){                
-                ctx.drawImage(spriteImg, frameIndex * 80, 0, 80, 80, this.x, this.y, 130, 170)
-                frameIndex++;
-                if(frameIndex == 9){
-                    frameIndex = 0;
-                }
+            Draw(){
+                ctx.strokeStyle = this.strokeColor;
+                ctx.fillStyle = "orange"
+                ctx.beginPath();
+                ctx.rect(this.x, this.y, 80, 150)
+                ctx.stroke();
+                ctx.fill();
             }
         }
 
         // ~~~~~~~~~~~~~~~~~~~~ CLASSE DAS BOLAS ~~~~~~~~~~~~~~~~~~~~~~~~
         class Ball{
-            constructor(style, x, y, radius, step, velX){
+            constructor(x, y, radius, level){
                 this.visible = true;
-                this.x = x;
-                this.y = y;
-                this.radius = radius; 
-                this.color = style;
-                this.step = step;
-                this.velX = velX;
-                this.velY = amplitude * Math.sin(angle);
+                this.x = canvasW / 2;
+                this.y = 300;
+                this.radius = 50; 
+                this.strokeColor = 'red';
+                this.level = 1;
+                this.velX = 0.5;
+                this.velY = 1;
             }
 
-            Update(){ 
-                this.x += this.velX;
-                this.y += this.velY;
-
-                if (this.x == canvasW - this.radius || this.x == this.radius){
-                    this.velX *= -1
-                }
-                if (this.y + this.radius >= 850){
-                    this.velY *= -1
-                } else {
-                    this.velY += aceleration;
-                }
+            Update(){
             }
 
             Reset(){
                 this.x = canvasW / 2;
                 this.y = 300;
-                this.velX = 1;
-                this.velY = 4 * Math.sin(angle);
             }
 
             Draw(){
                 ctx.beginPath()
-                ctx.fillStyle = this.color;
+                ctx.fillStyle = "#FF0000";
                 ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
                 ctx.closePath();
                 ctx.fill();
+                ctx.stroke();
             }
         }
 
         //~~~~~~~~~~~~~~~~~~~~ CLASSE DO HARPÃO ~~~~~~~~~~~~~~~~~~~~~~~~
         class Harpoon {
-            constructor(posX, style) {
+            constructor(x, y, radius) {
                 this.visible = true;
-                this.x = posX + buster.radius;
+                this.x = buster.x + buster.radius;
                 this.y = buster.y + buster.radius;
-                this.style = style;
-                this.speed = 6;
-                this.radius = 20;
+                this.shot = false;
             }
 
             Update(){
-                this.y -= this.speed;
+                this.x = buster.x + buster.radius;  
             }
 
             Draw(){
                 ctx.beginPath()
-                ctx.fillStyle = this.style;
+                ctx.fillStyle = "grey";
                 ctx.moveTo(this.x, this.y);
                 ctx.lineTo(this.x, this.y - 50);
                 ctx.lineTo(this.x + 10, this.y - 40);
@@ -183,33 +137,20 @@
                 ctx.stroke();
             }
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
+
         function livesDraw(){
-            let startX1 = 950;
-            let startX2 = 30;
+            let startX = 950;
             let startY = 10;
-            for(let i = 0; i < livesBuster2; i++){
-                ctx.strokeStyle = 'lightgreen';
-                ctx.fillStyle = 'lightgreen';
+            ctx.strokeStyle = 'red';
+            ctx.fillStyle = 'red';
+            for(let i = 0; i < lives; i++){
                 ctx.beginPath();
-                ctx.moveTo(startX1, startY);
-                ctx.rect(startX1, startY, 15, 15)
+                ctx.moveTo(startX, startY);
+                ctx.rect(startX, startY, 15, 15)
                 ctx.closePath();
                 ctx.stroke();
                 ctx.fill();
-                startX1 -= 50;
-            }
-            for(let i = 0; i < livesBuster1; i++){
-                ctx.strokeStyle = 'orange';
-                ctx.fillStyle = 'orange';
-                ctx.beginPath();
-                ctx.moveTo(startX2, startY);
-                ctx.rect(startX2, startY, 15, 15)
-                ctx.closePath();
-                ctx.stroke();
-                ctx.fill();
-                startX2 += 50;
+                startX -= 50;
             }
         }
         
@@ -227,14 +168,22 @@
             do {
               currentDate = Date.now();
             } while (currentDate - date < milliseconds);
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = "blue"
+            ctx.beginPath();
+            ctx.rect(0, 850, canvasW, 50)
+            ctx.stroke();
+            ctx.fill();
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RENDER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         function Render() {
-            //MOVIMENTO
-            buster.moveLeft = (keys[65]);
-            buster2.moveLeft = (keys[37]);
-            buster.moveRight = (keys[68]);
-            buster2.moveRight = (keys[39]);
+            //definir teclas de movimento do player
+            buster.moveLeft = (keys[65] || keys[37]);
+            buster.moveRight = (keys[68] || keys[39]);
+            //definir teclas de arpao
+            harpoon.shot = (keys[32] || keys[38] || keys[87])
+            let exit = keys[27];
+            //movimento player
             if (buster.moveLeft && buster.x !== 0) {
                 buster.x -= 2
             }
@@ -316,32 +265,51 @@
             }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DRAW & UPDATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             background();
-            livesDraw();
-            floor();
-            
-            //HARPÕES
-            if (harpoons.length !== 0){
-                for (let k = 0; k < harpoons.length; k++){
-                    harpoons[k].Update()
-                    harpoons[k].Draw()
-                    //poupar memória
-                    if (harpoons[k].y <= 0) {
-                        harpoons.splice(k, 1);
-                    }
-                }
-            } 
-            
-
-            
-            
-            //BOLAS
-            if (balls.length !== 0){
-                for (let j = 0; j < balls.length; j++){
-                    balls[j].Update()
-                    balls[j].Draw(j)
-                }
+            // arpao
+            if (harpoon.shot) {
+                harpoon.y -= 5;
+            }
+            //nova bola
+            ballNew.x += ballNew.velX;
+            ballNew.y += ballNew.velY;
+            //colisões de bolas
+            if (ballNew.x == canvasW - ballNew.radius || ballNew.x == ballNew.radius){
+                ballNew.velX *= -1
+            }
+            if (ballNew.y + ballNew.radius == 850 || ballNew.y == 299){   //má pratica tem de se trocar os números por variaveis
+                ballNew.velY *= -1
+            }
+            //COLISÕES VÃO SER CHAMADAS AQUI  || entre arpao e bola
+            if(harpoon.x + 5 <= ballNew.x + ballNew.radius 
+                && harpoon.x - 5 >= ballNew.x - ballNew.radius
+                && harpoon.y - 70 <= ballNew.y + ballNew.radius
+                && harpoon.y - 70 >= ballNew.y - ballNew.radius){
+                console.log("bang")
+                harpoon.x = buster.x + buster.radius
+                harpoon.y = buster.y + buster.radius
+                //não é suposto ser reset porque o movimento continua
+                ballNew.Reset();
+                //push de uma nova bola e diminuir o tamanho da atual
+                //definir 
+            }
+            //colisao player e bola + controlo de vidas
+            if(buster.x + 40 <= ballNew.x + ballNew.radius
+                && buster.x - 40 >= ballNew.x - ballNew.radius
+                && buster.y - 75 <= ballNew.y + ballNew.radius
+                && buster.y - 75 >= ballNew.y - ballNew.radius){
+                console.log("LOST")
+                ballNew.Reset();
+                lives -= 1;
             }
             
+            
+            ctx.clearRect(0,0, canvasW, canvasH);
+            livesDraw();
+            floor();
+            buster.Draw();
+            ballNew.Draw();
+            harpoon.Update();
+            harpoon.Draw();
             requestAnimationFrame(Render);
         }
     </script>
