@@ -44,8 +44,8 @@
             canvas.width = canvasW
             canvas.height = canvasH
             background();
-            buster = new Buster(300);
-            buster2 = new Buster(600);
+            buster = new Buster(100);
+            buster2 = new Buster(800);
             balls.push(new Ball("#45f542", canvasW / 2, 300, 50, 1, 1));
             
             document.body.addEventListener("keydown", HandleKeyDown);
@@ -88,7 +88,7 @@
         class Buster {
             constructor(posX){
                 this.visible = true; 
-                this.radius = 50;
+                this.radius = 20;
                 this.moveLeft = false;
                 this.moveRight = false;
                 this.x = posX;
@@ -142,7 +142,7 @@
                 this.x = canvasW / 2;
                 this.y = 300;
                 this.velX = 1;
-                this.velY = 4 * Math.sin(angle);
+                this.velY = amplitude * Math.sin(angle);
             }
 
             Draw(){
@@ -158,8 +158,8 @@
         class Harpoon {
             constructor(posX, style) {
                 this.visible = true;
-                this.x = posX + buster.radius;
-                this.y = buster.y + buster.radius;
+                this.x = posX + 50;
+                this.y = buster.y + 50;
                 this.style = style;
                 this.speed = 6;
                 this.radius = 10;
@@ -279,12 +279,12 @@
             if (balls.length !== 0) {
                 for (let n = 0; n < balls.length; n++) {
                     if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster.x, buster.y, buster.radius) && livesBuster1 > 0) {
-                        buster.Reset();
-                        livesBuster1--;
-                    }
+                        livesBuster1-=1;
+                        levelReset(level);
+                    } 
                     if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster2.x, buster2.y, buster2.radius)&& livesBuster2 > 0) {
-                        buster2.Reset();
-                        livesBuster2--;
+                        livesBuster2-=1;
+                        levelReset(level);
                     }
                 }
             }
@@ -302,7 +302,7 @@
                 buster2.visible = false;
                 ctx.fillStyle = 'white';
                 ctx.font='40px "Press Start 2P"';
-                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 300, canvasH / 2 + 50)
+                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 300, canvasH / 2)
             }  else if (livesBuster2 > 0){
                 buster2.Draw();
             }
@@ -327,8 +327,8 @@
             if(balls.length === 0){
                 level++;
                 ctx.fillStyle = 'white';
-                ctx.font='20px "Press Start 2P"';
-                ctx.fillText('LEVEL PASSED. BE READY', canvasW / 2 - 150, canvasH / 2 + 120)
+                ctx.font='35px "Press Start 2P"';
+                ctx.fillText('LEVEL PASSED. BE READY', canvasW / 2 - 350, canvasH / 2 + 120)
                 if(level === 2) {
                     livesBuster1 += 1;
                     livesBuster2 += 1;
@@ -338,6 +338,23 @@
                         }, 3000);
                 }
             }
+
+            //Reset 
+            function levelReset(levelStat) {
+                if (balls.length !==0) {balls.splice(0)}
+                if (level === 1){
+                    buster.x = 100
+                    buster2.x = 800
+                    balls.push(new Ball("#45f542", canvasW / 2, 300, 50, 1, 1));
+                }
+                if (level === 2){
+                    buster.x = 100
+                    buster2.x = 800
+                    balls.push(new Ball("#45f542", 200, 300, 50, 1, -1));
+                    balls.push(new Ball("#45f542", 600, 300, 50, 1, 1));
+                }
+            }
+            
             //DRAW & UPDATE
             background();
             livesDraw();
