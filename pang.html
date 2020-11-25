@@ -32,7 +32,10 @@
         let harpoons = [];
         let livesBuster1 = 3;
         let livesBuster2 = 3;
+        let frameCounter = 0;
         let level = 1;
+        let spriteImg = new Image();
+        spriteImg.src = "sprites.png";
 
         document.addEventListener('DOMContentLoaded', SetupCanvas);
 
@@ -40,8 +43,8 @@
             canvas.width = canvasW
             canvas.height = canvasH
             background();
-            buster = new Buster();
-            buster2 = new Buster();
+            buster = new Buster(300);
+            buster2 = new Buster(600);
             balls.push(new Ball());
             
             document.body.addEventListener("keydown", HandleKeyDown);
@@ -72,28 +75,30 @@
             }
         }
 
+        function framerateSpriteFix() {
+            frameCounter++;
+            if(frameCounter == 4) {
+                return frameCounter;
+                frameCounter = 0;
+            }
+        }
+
         // ~~~~~~~~~~~~~~~~~~~~ CLASSE DA PERSONAGEM ~~~~~~~~~~~~~~~~~~~~~~~~
         class Buster {
-            constructor(){
+            constructor(posX){
                 this.visible = true; 
-                this.radius = 40;
+                this.radius = 60;
                 this.moveLeft = false;
                 this.moveRight = false;
-                this.x = (canvasW / 2) - this.radius;
+                this.x = posX;
                 this.y = 700;
             }
 
             Update(){
             }
             
-            Draw(){
-                let spriteImg = new Image();
-                spriteImg.src = "sprites.png";
-                spriteImg.onload = function(){
-                }
-                
+            Draw(){                
                 ctx.drawImage(spriteImg, frameIndex * 80, 0, 80, 80, this.x, this.y, 130, 170)
-                
                 frameIndex++;
                 if(frameIndex == 9){
                     frameIndex = 0;
@@ -219,8 +224,6 @@
             buster.moveRight = (keys[68]);
             buster2.moveRight = (keys[39]);
 
-            
-            
             //BUSTER 1
             if (buster.moveLeft && buster.x !== 0) {
                 buster.x -= 2
@@ -236,14 +239,26 @@
                 buster2.x += 2
             }
             
-
+            if(livesBuster1 <= 0){
+                buster.visible = false;
+                ctx.fillStyle = 'white';
+                ctx.font='20px "Press Start 2P"';
+                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 220, canvasH / 2)
+            }  else {
+                buster.Draw();
+            }
+            if(livesBuster1 <= 0){
+                buster2.visible = false;
+                ctx.fillStyle = 'white';
+                ctx.font='20px "Press Start 2P"';
+                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 220, canvasH / 2)
+            }  else {
+                buster2.Draw();
+            }
                        
             background();
             livesDraw();
             floor();
-            
-            buster.Draw();
-            buster2.Draw();
             
             //HARPÕES
             if (harpoons.length !== 0){
