@@ -88,7 +88,7 @@
         class Buster {
             constructor(posX){
                 this.visible = true; 
-                this.radius = 60;
+                this.radius = 50;
                 this.moveLeft = false;
                 this.moveRight = false;
                 this.x = posX;
@@ -214,12 +214,19 @@
         }
         
         function floor(){
-            ctx.strokeStyle = "black";
-            ctx.fillStyle = "grey"
-            ctx.beginPath();
-            ctx.rect(0, 850, canvasW, 50)
-            ctx.stroke();
-            ctx.fill();
+            let img = new Image();
+            img.src = 'planetfloor.png';
+            img.onload = function(){
+                ctx.drawImage(img, 0, 800);
+            }
+        }
+
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+              currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RENDER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         function Render() {
@@ -272,13 +279,11 @@
             //Busters com Bolas
             if (balls.length !== 0) {
                 for (let n = 0; n < balls.length; n++) {
-                    if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster.x, buster.y, buster.radius)) {
-                        if(livesBuster1 != 0) {
-                            buster.Reset();
-                        }
+                    if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster.x, buster.y, buster.radius) && livesBuster1 > 0) {
+                        buster.Reset();
                         livesBuster1--;
                     }
-                    if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster2.x, buster2.y, buster2.radius)) {
+                    if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster2.x, buster2.y, buster2.radius)&& livesBuster2 > 0) {
                         buster2.Reset();
                         livesBuster2--;
                     }
@@ -290,16 +295,14 @@
                 ctx.fillStyle = 'white';
                 ctx.font='20px "Press Start 2P"';
                 ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 150, canvasH / 2)
-                console.log("1 Perdeu")
             }  else {
-                buster.Draw();
+                buster.Draw()
             }
             if(livesBuster2 <= 0){
                 buster2.visible = false;
                 ctx.fillStyle = 'white';
                 ctx.font='20px "Press Start 2P"';
                 ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 150, canvasH / 2 + 120)
-                console.log("2 Perdeu")
             }  else {
                 buster2.Draw();
             }
