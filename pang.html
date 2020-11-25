@@ -26,7 +26,8 @@
         let buster;
         let style;
         let frameIndex = 0;
-        let gravity = 0.001
+        let aceleration = 0.1
+        let angle = -85 * Math.PI / 180;
         let keys = [];
         let balls = [];
         let lives = 3;
@@ -105,12 +106,11 @@
                 this.radius = 50; 
                 this.strokeColor = 'red';
                 this.level = 1;
-                this.velX = 0.5;
-                this.velY = 1;
-                this.bounce = 1;
+                this.velX = 8 * Math.cos(angle);
+                this.velY = 8 * Math.sin(angle);
             }
 
-            Update(){
+            Update(){ 
             }
 
             Reset(){
@@ -183,6 +183,7 @@
         }
 
         function Render() {
+            //MOVIMENTO
             buster.moveLeft = (keys[65]);
             buster2.moveLeft = (keys[37]);
             buster.moveRight = (keys[68]);
@@ -216,15 +217,16 @@
             }
             
             //BOLA
-            ball.velY += gravity;
             ball.x += ball.velX;
             ball.y += ball.velY;
 
             if (ball.x == canvasW - ball.radius || ball.x == ball.radius){
                 ball.velX *= -1
             }
-            if (ball.y + ball.radius >= 850 || ball.y <= 299){
+            if (ball.y + ball.radius >= 850){
                 ball.velY *= -1
+            } else {
+                ball.velY += aceleration;
             }
 
             //COLISÕES VÃO SER CHAMADAS AQUI
@@ -247,6 +249,7 @@
             harpoon2.Draw();
             buster.Draw();
             buster2.Draw();
+            ball.Update();
             ball.Draw();
             requestAnimationFrame(Render);
         }
