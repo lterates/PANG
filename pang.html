@@ -180,7 +180,6 @@
                 ctx.lineTo(this.x, this.y - 50);
                 ctx.closePath();
                 ctx.fill();
-                ctx.stroke();
             }
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -290,6 +289,7 @@
                 }
             }
             
+            //If lives reach 0
             if(livesBuster1 <= 0){
                 buster.visible = false;
                 ctx.fillStyle = 'white';
@@ -307,14 +307,21 @@
                 buster2.Draw();
             }
 
+            //Levels
             if(balls.length === 0){
                 level++;
                 livesBuster1++;
                 livesBuster2++;
-                balls.push(new Ball("red"))
-                balls.push(new Ball("blue"))
+                
+                if(level === 2) {
+                    ctx.fillStyle = 'white';
+                    ctx.font='20px "Press Start 2P"';
+                    ctx.fillText('LEVEL 2 || BE READY', canvasW / 2 - 150, canvasH / 2 + 120)
+                    sleep(4000);
+                    balls.push(new Ball("#45f542", 200, 300, 50, 1, -1));
+                }
             }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DRAW & UPDATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //DRAW & UPDATE
             background();
             livesDraw();
             floor();
@@ -324,7 +331,6 @@
                 for (let k = 0; k < harpoons.length; k++){
                     harpoons[k].Update()
                     harpoons[k].Draw()
-                    //poupar memória
                     if (harpoons[k].y <= 0) {
                         harpoons.splice(k, 1);
                     }
