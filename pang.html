@@ -162,7 +162,7 @@
                 this.y = buster.y + buster.radius;
                 this.style = style;
                 this.speed = 6;
-                this.radius = 20;
+                this.radius = 10;
             }
 
             Update(){
@@ -290,35 +290,52 @@
             }
             
             //If lives reach 0
-            if(livesBuster1 <= 0){
+            if(livesBuster1 <= 0 && livesBuster2 > 0){
                 buster.visible = false;
                 ctx.fillStyle = 'white';
-                ctx.font='20px "Press Start 2P"';
-                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 150, canvasH / 2)
-            }  else {
+                ctx.font='40px "Press Start 2P"';
+                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 300, canvasH / 2)
+            }  else if (livesBuster1 > 0){
                 buster.Draw()
             }
-            if(livesBuster2 <= 0){
+            if(livesBuster2 <= 0 && livesBuster1 > 0){
                 buster2.visible = false;
                 ctx.fillStyle = 'white';
-                ctx.font='20px "Press Start 2P"';
-                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 150, canvasH / 2 + 120)
-            }  else {
+                ctx.font='40px "Press Start 2P"';
+                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 300, canvasH / 2 + 50)
+            }  else if (livesBuster2 > 0){
                 buster2.Draw();
+            }
+            if(livesBuster1 <= 0 && livesBuster2 <= 0){
+                buster.visible = false;
+                buster2.visible = false;
+                balls.visible = false;
+                ctx.fillStyle = 'white';
+                ctx.font='50px "Press Start 2P"';
+                ctx.fillText('GAME OVER', canvasW / 2 - 250, canvasH / 2)
+            } else {
+                //Balls
+                if (balls.length !== 0){
+                    for (let j = 0; j < balls.length; j++){
+                        balls[j].Update()
+                        balls[j].Draw(j)
+                    }
+                }
             }
 
             //Levels
             if(balls.length === 0){
                 level++;
-                livesBuster1++;
-                livesBuster2++;
-                
+                ctx.fillStyle = 'white';
+                ctx.font='20px "Press Start 2P"';
+                ctx.fillText('LEVEL PASSED. BE READY', canvasW / 2 - 150, canvasH / 2 + 120)
                 if(level === 2) {
-                    ctx.fillStyle = 'white';
-                    ctx.font='20px "Press Start 2P"';
-                    ctx.fillText('LEVEL 2 || BE READY', canvasW / 2 - 150, canvasH / 2 + 120)
-                    sleep(4000);
-                    balls.push(new Ball("#45f542", 200, 300, 50, 1, -1));
+                    livesBuster1 += 1;
+                    livesBuster2 += 1;
+                    setTimeout(() => {
+                        balls.push(new Ball("#45f542", 200, 300, 50, 1, -1));
+                        balls.push(new Ball("#45f542", 600, 300, 50, 1, 1));
+                        }, 3000);
                 }
             }
             //DRAW & UPDATE
@@ -334,14 +351,6 @@
                     if (harpoons[k].y <= 0) {
                         harpoons.splice(k, 1);
                     }
-                }
-            }
-            
-            //Balls
-            if (balls.length !== 0){
-                for (let j = 0; j < balls.length; j++){
-                    balls[j].Update()
-                    balls[j].Draw(j)
                 }
             }
             
