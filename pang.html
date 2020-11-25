@@ -34,6 +34,7 @@
         let livesBuster2 = 3;
         let frameCounter = 0;
         let level = 1;
+        
         let spriteImg = new Image();
         spriteImg.src = "sprites.png";
 
@@ -45,7 +46,7 @@
             background();
             buster = new Buster(300);
             buster2 = new Buster(600);
-            balls.push(new Ball());
+            balls.push(new Ball("blue"));
             
             document.body.addEventListener("keydown", HandleKeyDown);
             document.body.addEventListener("keyup", HandleKeyUp);
@@ -108,13 +109,13 @@
 
         // ~~~~~~~~~~~~~~~~~~~~ CLASSE DAS BOLAS ~~~~~~~~~~~~~~~~~~~~~~~~
         class Ball{
-            constructor(x, y, radius, level){
+            constructor(style, step){
                 this.visible = true;
                 this.x = canvasW / 2;
                 this.y = 300;
                 this.radius = 50; 
-                this.strokeColor = 'red';
-                this.level = 1;
+                this.color = style;
+                this.step = 1;
                 this.velX = 1;
                 this.velY = amplitude * Math.sin(angle);
             }
@@ -142,11 +143,10 @@
 
             Draw(){
                 ctx.beginPath()
-                ctx.fillStyle = "#FF0000";
+                ctx.fillStyle = this.color;
                 ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
                 ctx.closePath();
                 ctx.fill();
-                ctx.stroke();
             }
         }
 
@@ -251,9 +251,17 @@
                 buster2.visible = false;
                 ctx.fillStyle = 'white';
                 ctx.font='20px "Press Start 2P"';
-                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 220, canvasH / 2)
+                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 220, canvasH / 2)
             }  else {
                 buster2.Draw();
+            }
+
+            if(balls.length === 0){
+                level++;
+                livesBuster1++;
+                livesBuster2++;
+                balls.push(new Ball("red"))
+                balls.push(new Ball("blue"))
             }
                        
             background();
