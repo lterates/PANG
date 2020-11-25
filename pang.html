@@ -27,10 +27,12 @@
         let style;
         let frameIndex = 0;
         let aceleration = 0.1
+        let amplitude = 4;
         let angle = -85 * Math.PI / 180;
         let keys = [];
         let balls = [];
-        let lives = 3;
+        let livesBuster1 = 3;
+        let livesBuster2 = 3;
         let level = 1;
 
         document.addEventListener('DOMContentLoaded', SetupCanvas);
@@ -43,7 +45,8 @@
             background();
             buster = new Buster();
             buster2 = new Buster();
-            ball = new Ball();
+            balls.push(new Ball());
+            
             harpoon = new Harpoon("orange");
             harpoon2 = new Harpoon("lightgreen");
 
@@ -88,7 +91,7 @@
                 spriteImg.onload = function(){
                 }
                 
-                ctx.drawImage(spriteImg, frameIndex*80,0,80,80,this.x ,this.y , 100, 170)
+                ctx.drawImage(spriteImg, frameIndex * 80, 0, 80, 80, this.x, this.y, 100, 170)
                 
                 frameIndex++;
                 if(frameIndex == 9){
@@ -107,15 +110,28 @@
                 this.strokeColor = 'red';
                 this.level = 1;
                 this.velX = 1;
-                this.velY = 4 * Math.sin(angle);
+                this.velY = amplitude * Math.sin(angle);
             }
 
             Update(){ 
+                this.x += this.velX;
+                this.y += this.velY;
+
+                if (this.x == canvasW - this.radius || this.x == this.radius){
+                    this.velX *= -1
+                }
+                if (this.y + this.radius >= 850){
+                    this.velY *= -1
+                } else {
+                    this.velY += aceleration;
+                }
             }
 
             Reset(){
                 this.x = canvasW / 2;
                 this.y = 300;
+                this.velX = 1;
+                this.velY = 4 * Math.sin(angle);
             }
 
             Draw(){
@@ -139,7 +155,6 @@
             }
 
             Update(){
-                
             }
 
             Draw(){
@@ -156,20 +171,33 @@
                 ctx.stroke();
             }
         }
-
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
         function livesDraw(){
-            let startX = 950;
+            let startX1 = 950;
+            let startX2 = 130;
             let startY = 10;
-            ctx.strokeStyle = 'red';
-            ctx.fillStyle = 'red';
-            for(let i = 0; i < lives; i++){
+            for(let i = 0; i < livesBuster1; i++){
+                ctx.strokeStyle = 'lightgreen';
+                ctx.fillStyle = 'lightgreen';
                 ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.rect(startX, startY, 15, 15)
+                ctx.moveTo(startX1, startY);
+                ctx.rect(startX1, startY, 15, 15)
                 ctx.closePath();
                 ctx.stroke();
                 ctx.fill();
-                startX -= 50;
+                startX1 -= 50;
+            }
+            for(let i = 0; i < livesBuster2; i++){
+                ctx.strokeStyle = 'orange';
+                ctx.fillStyle = 'orange';
+                ctx.beginPath();
+                ctx.moveTo(startX2, startY);
+                ctx.rect(startX2, startY, 15, 15)
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+                startX2 -= 50;
             }
         }
         
@@ -181,7 +209,7 @@
             ctx.stroke();
             ctx.fill();
         }
-
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RENDER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         function Render() {
             //MOVIMENTO
             buster.moveLeft = (keys[65]);
@@ -216,30 +244,8 @@
                 buster2.x += 2
             }
             
-            //BOLA
-            ball.x += ball.velX;
-            ball.y += ball.velY;
 
-            if (ball.x == canvasW - ball.radius || ball.x == ball.radius){
-                ball.velX *= -1
-            }
-            if (ball.y + ball.radius >= 850){
-                ball.velY *= -1
-            } else {
-                ball.velY += aceleration;
-            }
-
-            //COLISÕES VÃO SER CHAMADAS AQUI
-            if(harpoon.x + 5 <= ball.x + ball.radius 
-                && harpoon.x - 5 >= ball.x - ball.radius
-                && harpoon.y - 70 <= ball.y + ball.radius
-                && harpoon.y - 70 >= ball.y - ball.radius){
-                console.log("bang")
-                harpoon.x = buster.x + buster.radius
-                harpoon.y = buster.y + buster.radius
-                ball.Reset();
-            }
-            
+                       
             background();
             livesDraw();
             floor();
@@ -247,10 +253,18 @@
             harpoon.Draw();
             harpoon2.Update();
             harpoon2.Draw();
+            
             buster.Draw();
             buster2.Draw();
-            ball.Update();
-            ball.Draw();
+            
+            //BOLAS
+            if (balls.length !== 0){
+                for (let j = 0; j < balls.length; j++){
+                    balls[j].Update()
+                    balls[j].Draw(j)
+                }
+            }
+            
             requestAnimationFrame(Render);
         }
     </script>
