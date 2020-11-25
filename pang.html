@@ -154,7 +154,7 @@
             }
         }
 
-        //~~~~~~~~~~~~~~~~~~~~ CLASSE DO HARPÃO ~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~ CLASSE DO ARPÃO ~~~~~~~~~~~~~~~~~~~~~~~~
         class Harpoon {
             constructor(posX, style) {
                 this.visible = true;
@@ -248,7 +248,7 @@
                 buster2.x += 2
             }
 
-            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ COLISÕES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // COLISÕES
             function CollideCheck (aX, aY, aR, bX, bY, bR) {
                 let xDiff = Math.pow(aX - bX, 2); 
                 let yDiff = Math.pow(aY - bY, 2);
@@ -258,7 +258,7 @@
                     return false;
                 }
             }
-            //Harpão com Bolas
+            //Harpoon - Balls
             if (balls.length !== 0 && harpoons.length !== 0) {
                 for (let l = 0; l < balls.length; l++) {
                     for (let m = 0; m < harpoons.length; m++) {
@@ -276,7 +276,7 @@
                     }
                 }
             }
-            //Busters com Bolas
+            //Busters - Balls
             if (balls.length !== 0) {
                 for (let n = 0; n < balls.length; n++) {
                     if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster.x, buster.y, buster.radius) && livesBuster1 > 0) {
@@ -319,7 +319,7 @@
             livesDraw();
             floor();
             
-            //HARPÕES
+            //Harpoons
             if (harpoons.length !== 0){
                 for (let k = 0; k < harpoons.length; k++){
                     harpoons[k].Update()
@@ -329,12 +329,9 @@
                         harpoons.splice(k, 1);
                     }
                 }
-            } 
+            }
             
-
-            
-            
-            //BOLAS
+            //Balls
             if (balls.length !== 0){
                 for (let j = 0; j < balls.length; j++){
                     balls[j].Update()
