@@ -152,13 +152,11 @@
                 this.x = posX + buster.radius;
                 this.y = buster.y + buster.radius;
                 this.style = style;
-                this.angle = 0
-                this.speed = 4;
+                this.speed = 6;
             }
 
             Update(){
-                let radians = this.angle / Math.PI * 180;
-                this.y -= Math.sin(radians) * 4;
+                this.y -= this.speed;
             }
 
             Draw(){
