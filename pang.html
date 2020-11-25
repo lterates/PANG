@@ -163,28 +163,34 @@
         }
 
         function Render() {
+            //definir teclas de movimento do player
             buster.moveLeft = (keys[65] || keys[37]);
             buster.moveRight = (keys[68] || keys[39]);
+            //definir teclas de arpao
             harpoon.shot = (keys[32] || keys[38] || keys[87])
             let exit = keys[27];
+            //movimento player
             if (buster.moveLeft && buster.x !== 0) {
                 buster.x -= 2
             }
             if (buster.moveRight && buster.x !== canvasW - 2 * buster.radius) {
                 buster.x += 2
             }
+            // arpao
             if (harpoon.shot) {
                 harpoon.y -= 5;
             }
+            //nova bola
             ballNew.x += ballNew.velX;
             ballNew.y += ballNew.velY;
+            //colisões de bolas
             if (ballNew.x == canvasW - ballNew.radius || ballNew.x == ballNew.radius){
                 ballNew.velX *= -1
             }
-            if (ballNew.y + ballNew.radius == 850 || ballNew.y == 299){
+            if (ballNew.y + ballNew.radius == 850 || ballNew.y == 299){   //má pratica tem de se trocar os números por variaveis
                 ballNew.velY *= -1
             }
-            //COLISÕES VÃO SER CHAMADAS AQUI
+            //COLISÕES VÃO SER CHAMADAS AQUI  || entre arpao e bola
             if(harpoon.x + 5 <= ballNew.x + ballNew.radius 
                 && harpoon.x - 5 >= ballNew.x - ballNew.radius
                 && harpoon.y - 70 <= ballNew.y + ballNew.radius
