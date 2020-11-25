@@ -59,10 +59,10 @@
 
         function HandleKeyUp(e) {
             keys[e.keyCode] = false;
-            if (e.keyCode === 87){
+            if (e.keyCode === 87 && buster.visible == true){
                 harpoons.push(new Harpoon(buster.x, "orange"))
             }
-            if (e.keyCode === 38){
+            if (e.keyCode === 38 && buster2.visible == true){
                 harpoons.push(new Harpoon(buster2.x, "lightgreen"))
             }
         }
@@ -96,6 +96,10 @@
             }
 
             Update(){
+            }
+
+            Reset() {
+                this.x = canvasW/2;
             }
             
             Draw(){                
@@ -185,7 +189,7 @@
             let startX1 = 950;
             let startX2 = 30;
             let startY = 10;
-            for(let i = 0; i < livesBuster1; i++){
+            for(let i = 0; i < livesBuster2; i++){
                 ctx.strokeStyle = 'lightgreen';
                 ctx.fillStyle = 'lightgreen';
                 ctx.beginPath();
@@ -196,7 +200,7 @@
                 ctx.fill();
                 startX1 -= 50;
             }
-            for(let i = 0; i < livesBuster2; i++){
+            for(let i = 0; i < livesBuster1; i++){
                 ctx.strokeStyle = 'orange';
                 ctx.fillStyle = 'orange';
                 ctx.beginPath();
@@ -224,15 +228,12 @@
             buster2.moveLeft = (keys[37]);
             buster.moveRight = (keys[68]);
             buster2.moveRight = (keys[39]);
-
-            //BUSTER 1
             if (buster.moveLeft && buster.x !== 0) {
                 buster.x -= 2
             }
             if (buster.moveRight && buster.x !== canvasW - 2 * buster.radius) {
                 buster.x += 2
             }
-            //BUSTER 2
             if (buster2.moveLeft && buster2.x !== 0) {
                 buster2.x -= 2
             }
@@ -250,7 +251,7 @@
                     return false;
                 }
             }
-
+            //Harpão com Bolas
             if (balls.length !== 0 && harpoons.length !== 0) {
                 for (let l = 0; l < balls.length; l++) {
                     for (let m = 0; m < harpoons.length; m++) {
@@ -268,20 +269,37 @@
                     }
                 }
             }
+            //Busters com Bolas
+            if (balls.length !== 0) {
+                for (let n = 0; n < balls.length; n++) {
+                    if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster.x, buster.y, buster.radius)) {
+                        if(livesBuster1 != 0) {
+                            buster.Reset();
+                        }
+                        livesBuster1--;
+                    }
+                    if (CollideCheck(balls[n].x, balls[n].y, balls[n].radius, buster2.x, buster2.y, buster2.radius)) {
+                        buster2.Reset();
+                        livesBuster2--;
+                    }
+                }
+            }
             
             if(livesBuster1 <= 0){
                 buster.visible = false;
                 ctx.fillStyle = 'white';
                 ctx.font='20px "Press Start 2P"';
-                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 220, canvasH / 2)
+                ctx.fillText('PLAYER ONE LOST', canvasW / 2 - 150, canvasH / 2)
+                console.log("1 Perdeu")
             }  else {
                 buster.Draw();
             }
-            if(livesBuster1 <= 0){
+            if(livesBuster2 <= 0){
                 buster2.visible = false;
                 ctx.fillStyle = 'white';
                 ctx.font='20px "Press Start 2P"';
-                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 220, canvasH / 2)
+                ctx.fillText('PLAYER TWO LOST', canvasW / 2 - 150, canvasH / 2 + 120)
+                console.log("2 Perdeu")
             }  else {
                 buster2.Draw();
             }
@@ -303,7 +321,6 @@
                 for (let k = 0; k < harpoons.length; k++){
                     harpoons[k].Update()
                     harpoons[k].Draw()
-                    console.log(harpoons[k].y);
                     //poupar memória
                     if (harpoons[k].y <= 0) {
                         harpoons.splice(k, 1);
