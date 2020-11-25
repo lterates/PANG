@@ -172,7 +172,7 @@
 <body>
     <div style="font-family:'Press Start 2P'; color:white; text-align: center;" id='container'>
         P A N G !
-        <div id="game" style="border: 1px solid white ; width: 1000px; height: 900px;"> <br><br><br>
+        <div id="game" style="border: 1px solid white ; width: 1000px; height: 900px; position: absolute;"> <br><br><br>
             <!--GRUPO SVG-->
             <svg width="600" height="700" style="overflow: visible">
                 <g id="title" fill="#b883de">
@@ -247,9 +247,7 @@
             </svg>
         </div>
         <br><br>
-        <a href="menu.html">
-            <text id="skip" font-size="50" fill="white" x="200" y="500">SKIP TO MENU</text>
-        </a>
+        <button style="position: relative; font-size: 1em ;background: transparent; border: 2px solid white; font-family: 'Press Start 2P'; color: white; margin-top: 800px;" onclick="location.href='menu.html'">SKIP</button>
     </div>
 </body>
 
