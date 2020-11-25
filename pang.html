@@ -23,14 +23,13 @@
 
         let canvasW = 1000;
         let canvasH = 900;
-        let buster;
-        let style;
         let frameIndex = 0;
         let aceleration = 0.1
         let amplitude = 4;
         let angle = -85 * Math.PI / 180;
         let keys = [];
         let balls = [];
+        let harpoons = [];
         let livesBuster1 = 3;
         let livesBuster2 = 3;
         let level = 1;
@@ -40,16 +39,11 @@
         function SetupCanvas() {
             canvas.width = canvasW
             canvas.height = canvasH
-            //ctx.fillStyle = 'black'
-            //ctx.fillRect (0, 0, canvas.width, canvas.height);
             background();
             buster = new Buster();
             buster2 = new Buster();
             balls.push(new Ball());
             
-            harpoon = new Harpoon("orange");
-            harpoon2 = new Harpoon("lightgreen");
-
             document.body.addEventListener("keydown", HandleKeyDown);
             document.body.addEventListener("keyup", HandleKeyUp);
 
@@ -58,8 +52,15 @@
         function HandleKeyDown(e){
             keys[e.keyCode] = true;
         }
-        function HandleKeyUp(e){
+
+        function HandleKeyUp(e) {
             keys[e.keyCode] = false;
+            if (e.keyCode === 87){
+                harpoons.push(new Harpoon(buster.x, "orange"))
+            }
+            if (e.keyCode === 38){
+                harpoons.push(new Harpoon(buster2.x, "lightgreen"))
+            }
         }
 
         //BACKGROUND RENDER
@@ -146,15 +147,18 @@
 
         //~~~~~~~~~~~~~~~~~~~~ CLASSE DO HARPÃO ~~~~~~~~~~~~~~~~~~~~~~~~
         class Harpoon {
-            constructor(style) {
+            constructor(posX, style) {
                 this.visible = true;
-                this.x = buster.x + buster.radius;
+                this.x = posX + buster.radius;
                 this.y = buster.y + buster.radius;
-                this.shot = false;
                 this.style = style;
+                this.angle = 0
+                this.speed = 4;
             }
 
             Update(){
+                let radians = this.angle / Math.PI * 180;
+                this.y -= Math.sin(radians) * 4;
             }
 
             Draw(){
@@ -216,9 +220,9 @@
             buster2.moveLeft = (keys[37]);
             buster.moveRight = (keys[68]);
             buster2.moveRight = (keys[39]);
-            harpoon.shot = (keys[32])
-            harpoon2.shot = (keys[87])
-            let exit = keys[27];
+
+            
+            
             //BUSTER 1
             if (buster.moveLeft && buster.x !== 0) {
                 buster.x -= 2
@@ -226,16 +230,6 @@
             if (buster.moveRight && buster.x !== canvasW - 2 * buster.radius) {
                 buster.x += 2
             }
-
-            //HARPOONS
-            if (harpoon.shot) {
-                harpoon.y -= 5;
-            }
-            if (harpoon2.shot) {
-                harpoon2.y -= 5;
-            }
-            harpoon.x = buster.x + buster.radius;
-            harpoon2.x = buster2.x + buster.radius;
             //BUSTER 2
             if (buster2.moveLeft && buster2.x !== 0) {
                 buster2.x -= 2
@@ -249,13 +243,17 @@
             background();
             livesDraw();
             floor();
-            harpoon.Update();
-            harpoon.Draw();
-            harpoon2.Update();
-            harpoon2.Draw();
             
             buster.Draw();
             buster2.Draw();
+            
+            //HARPÕES
+            if (harpoons.length !== 0){
+                for (let k = 0; k < harpoons.length; k++){
+                    harpoons[k].Update()
+                    harpoons[k].Draw()
+                }
+            }
             
             //BOLAS
             if (balls.length !== 0){
